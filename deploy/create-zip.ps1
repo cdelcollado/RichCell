@@ -1,5 +1,5 @@
 # Crea un ZIP de distribució (sense node_modules)
-$source  = "C:\HTML_in_Excel"
+$source  = "C:\RichCell"
 $output  = "$env:USERPROFILE\Desktop\RichCell_install.zip"
 
 $exclude = @("node_modules", ".git")

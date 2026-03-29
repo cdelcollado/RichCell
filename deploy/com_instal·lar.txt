@@ -2,7 +2,7 @@ Procés complet:
 
 TU — una sola vegada:
 
-powershell -ExecutionPolicy Bypass -File "C:\HTML_in_Excel\deploy\create-zip.ps1"
+powershell -ExecutionPolicy Bypass -File "C:\RichCell\deploy\create-zip.ps1"
 
 → Genera RichCell_install.zip a l'escriptori (~2-3 MB)
 
