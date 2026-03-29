@@ -1,5 +1,7 @@
 # RichCell — Excel 365 Add-in
 
+![RichCell](assets/icon-80.png)
+
 A task pane add-in for Microsoft Excel 365 that lets you write and store formatted HTML directly inside cells, using a WYSIWYG editor powered by [Quill.js](https://quilljs.com/).
 
 Designed for workflows where rich HTML content needs to be authored and maintained inside a spreadsheet.
