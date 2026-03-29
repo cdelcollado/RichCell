@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ca">
+<html lang="en">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -40,9 +40,9 @@
         <h2>RichCell</h2>
       </div>
       <div id="cell-info">
-        <span id="cell-address-label">Cel·la activa:</span>
+        <span id="cell-address-label" data-i18n="activeCellLabel">Active cell:</span>
         <span id="cell-address">—</span>
-        <span id="unsaved-indicator" title="Hi ha canvis no guardats a Excel" hidden>●</span>
+        <span id="unsaved-indicator" data-i18n-title="unsavedTitle" title="Unsaved changes in Excel" hidden>●</span>
       </div>
     </div>
 
@@ -51,25 +51,25 @@
       <!-- Custom Quill toolbar -->
       <div id="toolbar">
         <span class="ql-formats">
-          <select class="ql-header" title="Capçalera">
+          <select class="ql-header" data-i18n-title="headerTooltip" title="Heading">
             <option value="1">H1</option>
             <option value="2">H2</option>
             <option selected>Normal</option>
           </select>
         </span>
         <span class="ql-formats">
-          <button class="ql-bold" title="Negreta (Ctrl+B)"></button>
-          <button class="ql-italic" title="Cursiva (Ctrl+I)"></button>
+          <button class="ql-bold"   data-i18n-title="boldTooltip"   title="Bold (Ctrl+B)"></button>
+          <button class="ql-italic" data-i18n-title="italicTooltip" title="Italic (Ctrl+I)"></button>
         </span>
         <span class="ql-formats">
-          <button class="ql-list" value="bullet" title="Llista de punts"></button>
-          <button class="ql-list" value="ordered" title="Llista numerada"></button>
+          <button class="ql-list" value="bullet"  data-i18n-title="bulletTooltip"  title="Bullet list"></button>
+          <button class="ql-list" value="ordered" data-i18n-title="orderedTooltip" title="Numbered list"></button>
         </span>
         <span class="ql-formats">
-          <button class="ql-link" title="Inserir enllaç"></button>
+          <button class="ql-link"  data-i18n-title="linkTooltip"  title="Insert link"></button>
         </span>
         <span class="ql-formats">
-          <button class="ql-clean" title="Eliminar tot el format"></button>
+          <button class="ql-clean" data-i18n-title="cleanTooltip" title="Remove all formatting"></button>
         </span>
       </div>
 
@@ -79,38 +79,38 @@
 
     <!-- Rendered preview (collapsible) -->
     <details id="render-preview-section">
-      <summary>Vista prèvia renderitzada</summary>
+      <summary data-i18n="renderPreviewTitle">Rendered preview</summary>
       <div id="render-preview"></div>
     </details>
 
     <!-- Raw HTML preview (collapsible) -->
     <details id="html-preview-section">
-      <summary>Vista prèvia HTML</summary>
+      <summary data-i18n="htmlPreviewTitle">HTML preview</summary>
       <pre id="html-preview"></pre>
     </details>
 
     <!-- Action buttons -->
     <div id="actions">
-      <button id="btn-send" class="btn-primary" title="Escriu el contingut HTML a la cel·la seleccionada (Ctrl+Enter)">
+      <button id="btn-send" class="btn-primary" data-i18n-title="sendButtonTitle" title="Write HTML content to the selected cell (Ctrl+Enter)">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 2L11 13"/>
           <path d="M22 2L15 22 11 13 2 9l20-7z"/>
         </svg>
-        Enviar a Excel
+        <span data-i18n="sendButton">Send to Excel</span>
       </button>
-      <button id="btn-undo" class="btn-secondary" title="Recupera el contingut original de la cel·la" disabled>
+      <button id="btn-undo" class="btn-secondary" data-i18n-title="undoButtonTitle" title="Restore the original cell content" disabled>
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="1 4 1 10 7 10"/>
           <path d="M3.51 15a9 9 0 1 0 .49-4"/>
         </svg>
-        Desfer
+        <span data-i18n="undoButton">Undo</span>
       </button>
-      <button id="btn-clear" class="btn-secondary" title="Netejar l'editor">
+      <button id="btn-clear" class="btn-secondary" data-i18n-title="clearButtonTitle" title="Clear the editor">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="3 6 5 6 21 6"/>
           <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
         </svg>
-        Netejar
+        <span data-i18n="clearButton">Clear</span>
       </button>
     </div>
 
@@ -121,6 +121,7 @@
 
   </div>
 
+  <script src="i18n.js"></script>
   <script src="taskpane.js"></script>
 </body>
 </html>

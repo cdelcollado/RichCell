@@ -9,7 +9,10 @@
   <ProviderName>RichCell</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
   <DisplayName DefaultValue="RichCell"/>
-  <Description DefaultValue="Edita i emmagatzema HTML formatat directament a cel·les d'Excel"/>
+  <Description DefaultValue="Edita i emmagatzema HTML formatat directament a cel·les d'Excel">
+    <Override Locale="en-US" Value="Edit and store formatted HTML directly in Excel cells"/>
+    <Override Locale="es-ES" Value="Edita y almacena HTML con formato directamente en celdas de Excel"/>
+  </Description>
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.png"/>
   <SupportUrl DefaultValue="https://localhost:3000"/>

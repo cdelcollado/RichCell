@@ -25,6 +25,11 @@ Designed for workflows where rich HTML content needs to be authored and maintain
 - **Status bar** — real-time feedback for every operation (load, save, error)
 - **XSS protection** — strips `on*` event attributes and `javascript:` URIs before writing to the cell
 
+### Language support
+- **Automatic UI language** — the add-in detects the Excel display language and shows the interface in the matching language
+- **Supported languages** — Catalan (`ca`), English (`en`), Spanish (`es`); falls back to English for any other locale
+- **Easy to extend** — adding a new language requires only a new entry in `i18n.js`
+
 ### Infrastructure
 - **Runs locally** — no cloud dependency, no data leaves your machine
 - **Auto-start** — optional Windows scheduled task starts the server at login
@@ -168,6 +173,7 @@ RichCell/
 ├── taskpane.html         # Task pane UI
 ├── taskpane.js           # Excel JS API logic
 ├── taskpane.css          # Styles
+├── i18n.js               # UI translations (Catalan, English, Spanish)
 ├── generate-icons.js     # Generates assets/icon-{16,32,80}.png
 ├── assets/               # Add-in icons
 ├── certs/                # SSL certificate (CA + server, localhost)

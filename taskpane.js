@@ -1,4 +1,4 @@
-/* global Office, Excel, Quill */
+/* global Office, Excel, Quill, getTranslations */
 
 'use strict';
 
@@ -6,6 +6,13 @@
 
 /** @type {Quill|null} The Quill editor instance. */
 let quill = null;
+
+/**
+ * Active translation map, resolved from Office.context.displayLanguage.
+ * Set once in Office.onReady before any UI function runs.
+ * @type {object}
+ */
+let t = null;
 
 /**
  * Guard flag that prevents the selection-change handler from re-triggering
@@ -29,19 +36,45 @@ let lastCellSnapshot = null;
 
 /**
  * Entry point: called by Office.js once the host application is ready.
- * Initialises the editor, wires up all UI controls, and loads the
+ * Resolves the display language, applies translations to the UI, then
+ * initialises the editor, wires up all UI controls, and loads the
  * currently selected cell's content.
  */
 Office.onReady((info) => {
+  t = getTranslations(Office.context.displayLanguage);
+
   if (info.host === Office.HostType.Excel) {
+    applyTranslations();
     initEditor();
     bindButtons();
     registerSelectionHandler();
     loadCurrentCellContent();
   } else {
-    showStatus('Aquest complement requereix Microsoft Excel.', 'error');
+    showStatus(t.requiresExcel, 'error');
   }
 });
+
+// ─── Translations ─────────────────────────────────────────────────────────────
+
+/**
+ * Walks all elements with data-i18n / data-i18n-title attributes and applies
+ * the matching strings from the active translation map.
+ * Also updates the document's lang attribute to match the resolved locale.
+ */
+function applyTranslations() {
+  const lang = (Office.context.displayLanguage || 'en').split('-')[0].toLowerCase();
+  document.documentElement.lang = lang;
+
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.dataset.i18n;
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+
+  document.querySelectorAll('[data-i18n-title]').forEach(el => {
+    const key = el.dataset.i18nTitle;
+    if (t[key] !== undefined) el.title = t[key];
+  });
+}
 
 // ─── Quill Editor Setup ───────────────────────────────────────────────────────
 
@@ -57,7 +90,7 @@ function initEditor() {
         container: '#toolbar'
       }
     },
-    placeholder: 'Escriu el contingut aquí...',
+    placeholder: t.placeholder,
     theme: 'snow'
   });
 
@@ -128,7 +161,7 @@ async function loadCurrentCellContent() {
       updateCellAddressDisplay(range.address);
 
       if (range.cellCount !== 1) {
-        showStatus('Selecciona una única cel·la per editar-ne el contingut.', 'warning');
+        showStatus(t.selectSingleCellToLoad, 'warning');
         return;
       }
 
@@ -145,10 +178,10 @@ async function loadCurrentCellContent() {
 
           if (looksLikeHTML(strValue)) {
             quill.root.innerHTML = strValue;
-            showStatus('HTML carregat des de la cel·la.', 'success');
+            showStatus(t.htmlLoaded, 'success');
           } else {
             quill.setText(strValue);
-            showStatus('Text carregat des de la cel·la.', 'info');
+            showStatus(t.textLoaded, 'info');
           }
 
           setSnapshot(strValue);
@@ -177,7 +210,7 @@ async function sendToExcel() {
   const htmlContent = buildCleanHTML();
 
   if (!htmlContent) {
-    showStatus("L'editor està buit. Afegeix contingut primer.", 'warning');
+    showStatus(t.editorEmpty, 'warning');
     return;
   }
 
@@ -191,7 +224,7 @@ async function sendToExcel() {
         <circle cx="12" cy="12" r="10"/>
         <polyline points="12 6 12 12 16 14"/>
       </svg>
-      Enviant…`;
+      ${t.sendingButton}`;
 
     await Excel.run(async (context) => {
       const range = context.workbook.getSelectedRange();
@@ -199,7 +232,7 @@ async function sendToExcel() {
       await context.sync();
 
       if (range.cellCount !== 1) {
-        showStatus('Selecciona una única cel·la on escriure el contingut.', 'warning');
+        showStatus(t.selectSingleCellToSend, 'warning');
         return;
       }
 
@@ -213,7 +246,7 @@ async function sendToExcel() {
 
       setSnapshot(htmlContent);
       setUnsavedIndicator(false);
-      showStatus('HTML enviat correctament a Excel! (Ctrl+Enter)', 'success');
+      showStatus(t.sentOk, 'success');
     });
   } catch (error) {
     handleError(error);
@@ -226,7 +259,7 @@ async function sendToExcel() {
         <path d="M22 2L11 13"/>
         <path d="M22 2L15 22 11 13 2 9l20-7z"/>
       </svg>
-      Enviar a Excel`;
+      ${t.sendButton}`;
   }
 }
 
@@ -253,7 +286,7 @@ function undoToCell() {
     setUnsavedIndicator(false);
   }
 
-  showStatus('Contingut restaurat.', 'info');
+  showStatus(t.restored, 'info');
 }
 
 /**
@@ -277,7 +310,7 @@ function clearEditor() {
   quill.setText('');
   updateHTMLPreview();
   updateRenderPreview();
-  showStatus('Editor netejat.', 'info');
+  showStatus(t.cleared, 'info');
 }
 
 // ─── HTML Utilities ───────────────────────────────────────────────────────────
@@ -334,7 +367,7 @@ function updateHTMLPreview() {
   const preview = document.getElementById('html-preview');
   if (!preview) return;
   const html = buildCleanHTML();
-  preview.textContent = html || '(buit)';
+  preview.textContent = html || t.empty;
 }
 
 // ─── Rendered Preview ─────────────────────────────────────────────────────────
@@ -348,7 +381,7 @@ function updateRenderPreview() {
   const container = document.getElementById('render-preview');
   if (!container) return;
   const html = buildCleanHTML();
-  container.innerHTML = html || '<em style="color:#a19f9d">(buit)</em>';
+  container.innerHTML = html || `<em style="color:#a19f9d">${t.empty}</em>`;
 }
 
 // ─── Unsaved Indicator ────────────────────────────────────────────────────────
@@ -424,11 +457,11 @@ function handleError(error) {
 
   let msg;
   if (error && error.code) {
-    msg = `Error d'Office (${error.code}): ${error.message}`;
+    msg = t.officeError(error.code, error.message);
   } else if (error && error.message) {
-    msg = `Error: ${error.message}`;
+    msg = t.genericError(error.message);
   } else {
-    msg = 'S\'ha produït un error inesperat.';
+    msg = t.unexpectedError;
   }
 
   showStatus(msg, 'error');
