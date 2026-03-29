@@ -3,11 +3,35 @@
 'use strict';
 
 // ─── State ────────────────────────────────────────────────────────────────────
+
+/** @type {Quill|null} The Quill editor instance. */
 let quill = null;
-let isLoadingFromCell = false;  // Guard: avoid re-triggering on programmatic edits
+
+/**
+ * Guard flag that prevents the selection-change handler from re-triggering
+ * while the editor is being updated programmatically.
+ * @type {boolean}
+ */
+let isLoadingFromCell = false;
+
+/** @type {number|null} Timer ID for auto-clearing the status bar message. */
 let statusTimer = null;
 
+/**
+ * Stores the last HTML value loaded from the active cell, enabling the
+ * "Undo" button to restore the cell's original content after an edit.
+ * Null when no cell has been loaded yet.
+ * @type {string|null}
+ */
+let lastCellSnapshot = null;
+
 // ─── Office Initialization ────────────────────────────────────────────────────
+
+/**
+ * Entry point: called by Office.js once the host application is ready.
+ * Initialises the editor, wires up all UI controls, and loads the
+ * currently selected cell's content.
+ */
 Office.onReady((info) => {
   if (info.host === Office.HostType.Excel) {
     initEditor();
@@ -20,6 +44,11 @@ Office.onReady((info) => {
 });
 
 // ─── Quill Editor Setup ───────────────────────────────────────────────────────
+
+/**
+ * Initialises the Quill WYSIWYG editor with the snow theme and attaches
+ * it to the #editor element. Updates the HTML preview on every keystroke.
+ */
 function initEditor() {
   quill = new Quill('#editor', {
     modules: {
@@ -27,25 +56,38 @@ function initEditor() {
         container: '#toolbar'
       }
     },
-    placeholder: 'Escriu la descripció del producte aquí...',
+    placeholder: 'Escriu el contingut aquí...',
     theme: 'snow'
   });
 
-  // Update HTML preview on every content change
   quill.on('text-change', updateHTMLPreview);
 }
 
 // ─── Button Bindings ──────────────────────────────────────────────────────────
+
+/**
+ * Attaches click handlers to all action buttons and registers the
+ * Ctrl+Enter keyboard shortcut for sending content to Excel.
+ */
 function bindButtons() {
   document.getElementById('btn-send').addEventListener('click', sendToExcel);
+  document.getElementById('btn-undo').addEventListener('click', undoToCell);
   document.getElementById('btn-clear').addEventListener('click', clearEditor);
+
+  // Ctrl+Enter shortcut: send to Excel without reaching for the mouse
+  document.addEventListener('keydown', (e) => {
+    if (e.ctrlKey && e.key === 'Enter') {
+      e.preventDefault();
+      sendToExcel();
+    }
+  });
 }
 
 // ─── Excel Selection Handler ──────────────────────────────────────────────────
 
 /**
- * Registers a persistent handler so that every time the user clicks
- * a different cell the editor is updated automatically.
+ * Registers a persistent workbook-level handler so that each time the user
+ * selects a different cell the editor content is updated automatically.
  */
 function registerSelectionHandler() {
   Excel.run(async (context) => {
@@ -55,8 +97,8 @@ function registerSelectionHandler() {
 }
 
 /**
- * Called by Excel whenever the selection changes.
- * We open a NEW Excel.run context here (the event arg context is read-only).
+ * Called by Excel whenever the active selection changes.
+ * Opens a new Excel.run context because the event argument context is read-only.
  */
 async function onSelectionChanged(/* event */) {
   if (isLoadingFromCell) return;
@@ -66,8 +108,10 @@ async function onSelectionChanged(/* event */) {
 // ─── Load Cell Content Into Editor ───────────────────────────────────────────
 
 /**
- * Reads the currently selected cell and loads its value into Quill
- * if it contains HTML (or plain text).
+ * Reads the value of the currently selected cell and loads it into the
+ * Quill editor. If the value looks like HTML it is set as innerHTML;
+ * plain text is set via setText(). Also snapshots the loaded value so
+ * that the Undo button can restore it later.
  */
 async function loadCurrentCellContent() {
   try {
@@ -89,8 +133,8 @@ async function loadCurrentCellContent() {
 
       try {
         if (rawValue === null || rawValue === undefined || rawValue === '') {
-          // Empty cell → clear editor silently
           quill.setText('');
+          setSnapshot(null);
         } else {
           const strValue = String(rawValue);
 
@@ -98,10 +142,11 @@ async function loadCurrentCellContent() {
             quill.root.innerHTML = strValue;
             showStatus('HTML carregat des de la cel·la.', 'success');
           } else {
-            // Plain text: set as a paragraph
             quill.setText(strValue);
             showStatus('Text carregat des de la cel·la.', 'info');
           }
+
+          setSnapshot(strValue);
         }
       } finally {
         isLoadingFromCell = false;
@@ -117,8 +162,9 @@ async function loadCurrentCellContent() {
 // ─── Send to Excel ────────────────────────────────────────────────────────────
 
 /**
- * Takes the current editor content, sanitises it and writes it to
- * the active cell as an HTML string.
+ * Sanitises the current editor content and writes it to the active cell
+ * as a plain HTML string. Auto-fits the row height after writing.
+ * Disables the send button while the async operation is in progress.
  */
 async function sendToExcel() {
   const htmlContent = buildCleanHTML();
@@ -157,7 +203,10 @@ async function sendToExcel() {
       range.format.autofitRows();
 
       await context.sync();
-      showStatus('HTML enviat correctament a Excel!', 'success');
+
+      // Snapshot the newly written value so Undo can revert to it
+      setSnapshot(htmlContent);
+      showStatus('HTML enviat correctament a Excel! (Ctrl+Enter)', 'success');
     });
   } catch (error) {
     handleError(error);
@@ -174,7 +223,47 @@ async function sendToExcel() {
   }
 }
 
+// ─── Undo ─────────────────────────────────────────────────────────────────────
+
+/**
+ * Restores the editor to the snapshot value that was loaded from the cell
+ * the last time it was read. Does nothing if no snapshot exists.
+ */
+function undoToCell() {
+  if (lastCellSnapshot === null) return;
+
+  isLoadingFromCell = true;
+  try {
+    if (looksLikeHTML(lastCellSnapshot)) {
+      quill.root.innerHTML = lastCellSnapshot;
+    } else {
+      quill.setText(lastCellSnapshot);
+    }
+  } finally {
+    isLoadingFromCell = false;
+    updateHTMLPreview();
+  }
+
+  showStatus('Contingut restaurat.', 'info');
+}
+
+/**
+ * Saves a snapshot of the current cell value and updates the Undo button state.
+ * Pass null to indicate there is nothing to undo (e.g. empty cell).
+ * @param {string|null} value - The cell value to snapshot, or null to clear.
+ */
+function setSnapshot(value) {
+  lastCellSnapshot = value;
+  const btn = document.getElementById('btn-undo');
+  if (btn) btn.disabled = (value === null);
+}
+
 // ─── Clear Editor ─────────────────────────────────────────────────────────────
+
+/**
+ * Clears all content from the editor without modifying the Excel cell.
+ * Does not affect the undo snapshot.
+ */
 function clearEditor() {
   quill.setText('');
   updateHTMLPreview();
@@ -184,13 +273,16 @@ function clearEditor() {
 // ─── HTML Utilities ───────────────────────────────────────────────────────────
 
 /**
- * Returns sanitised HTML from the editor, removing Quill's internal
- * class/style attributes that are not needed in the stored value.
+ * Returns sanitised HTML from the editor, stripping attributes that are
+ * either Quill-internal (class, style, data-*) or security-sensitive
+ * (on* event handlers, javascript: URIs).
+ * Returns an empty string when the editor is blank.
+ * @returns {string} Clean HTML string, or '' if the editor is empty.
  */
 function buildCleanHTML() {
   let html = quill.root.innerHTML.trim();
 
-  // Quill's empty state
+  // Quill's empty state representations
   if (html === '<p><br></p>' || html === '<p></p>' || html === '') return '';
 
   // Remove Quill-specific attributes that add no semantic value
@@ -212,13 +304,22 @@ function buildCleanHTML() {
 }
 
 /**
- * Simple heuristic: does the string contain at least one HTML tag?
+ * Returns true if the given string contains at least one HTML tag.
+ * Used as a heuristic to decide whether to load a cell value as HTML
+ * or as plain text.
+ * @param {string} str - The string to test.
+ * @returns {boolean}
  */
 function looksLikeHTML(str) {
   return /<[a-z][\s\S]*>/i.test(str);
 }
 
 // ─── HTML Preview ─────────────────────────────────────────────────────────────
+
+/**
+ * Updates the collapsible raw HTML preview panel with the current
+ * sanitised editor content.
+ */
 function updateHTMLPreview() {
   const preview = document.getElementById('html-preview');
   if (!preview) return;
@@ -227,10 +328,15 @@ function updateHTMLPreview() {
 }
 
 // ─── Cell Address Display ─────────────────────────────────────────────────────
+
+/**
+ * Updates the cell address badge in the header.
+ * Strips the sheet name prefix (e.g. "Sheet1!B4" → "B4").
+ * @param {string} fullAddress - The full cell address returned by the Excel API.
+ */
 function updateCellAddressDisplay(fullAddress) {
   const el = document.getElementById('cell-address');
   if (!el) return;
-  // Strip sheet name (e.g. "Sheet1!B4" → "B4")
   const short = fullAddress.includes('!') ? fullAddress.split('!')[1] : fullAddress;
   el.textContent = short;
 }
@@ -238,8 +344,9 @@ function updateCellAddressDisplay(fullAddress) {
 // ─── Status Bar ───────────────────────────────────────────────────────────────
 
 /**
- * @param {string} message
- * @param {'success'|'error'|'warning'|'info'} type
+ * Displays a temporary message in the status bar and clears it after 4 seconds.
+ * @param {string} message - The message to display.
+ * @param {'success'|'error'|'warning'|'info'} type - Controls the colour of the badge.
  */
 function showStatus(message, type) {
   const el = document.getElementById('status-message');
@@ -256,12 +363,18 @@ function showStatus(message, type) {
 }
 
 // ─── Error Handler ────────────────────────────────────────────────────────────
+
+/**
+ * Logs an error to the browser console and shows a human-readable message
+ * in the status bar. Handles both OfficeExtension errors (with .code) and
+ * standard JavaScript errors (with .message).
+ * @param {Error|Office.Error} error - The caught error object.
+ */
 function handleError(error) {
   console.error('[RichCell]', error);
 
   let msg;
   if (error && error.code) {
-    // OfficeExtension.Error
     msg = `Error d'Office (${error.code}): ${error.message}`;
   } else if (error && error.message) {
     msg = `Error: ${error.message}`;

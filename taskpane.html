@@ -74,12 +74,19 @@
 
     <!-- Action buttons -->
     <div id="actions">
-      <button id="btn-send" class="btn-primary" title="Escriu el contingut HTML a la cel·la seleccionada">
+      <button id="btn-send" class="btn-primary" title="Escriu el contingut HTML a la cel·la seleccionada (Ctrl+Enter)">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M22 2L11 13"/>
           <path d="M22 2L15 22 11 13 2 9l20-7z"/>
         </svg>
         Enviar a Excel
+      </button>
+      <button id="btn-undo" class="btn-secondary" title="Recupera el contingut original de la cel·la" disabled>
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="1 4 1 10 7 10"/>
+          <path d="M3.51 15a9 9 0 1 0 .49-4"/>
+        </svg>
+        Desfer
       </button>
       <button id="btn-clear" class="btn-secondary" title="Netejar l'editor">
         <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
