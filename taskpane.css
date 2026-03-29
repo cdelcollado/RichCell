@@ -169,6 +169,72 @@ body {
   color: var(--color-primary);
 }
 
+/* ─── Quill header picker ───────────────────────────────────────────────────── */
+.ql-snow .ql-picker.ql-header .ql-picker-label::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item::before {
+  content: 'Normal';
+}
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="1"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="1"]::before { content: 'H1'; }
+.ql-snow .ql-picker.ql-header .ql-picker-label[data-value="2"]::before,
+.ql-snow .ql-picker.ql-header .ql-picker-item[data-value="2"]::before { content: 'H2'; }
+
+.ql-snow .ql-picker.ql-header {
+  width: 60px;
+}
+
+/* ─── Unsaved indicator ─────────────────────────────────────────────────────── */
+#unsaved-indicator {
+  color: var(--color-warning);
+  font-size: 14px;
+  line-height: 1;
+  margin-left: 2px;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+/* ─── Rendered Preview ──────────────────────────────────────────────────────── */
+#render-preview-section {
+  flex-shrink: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  max-height: 110px;
+}
+
+#render-preview-section summary {
+  cursor: pointer;
+  font-size: 11.5px;
+  color: var(--color-text-muted);
+  padding: 4px 8px;
+  background: var(--color-secondary-bg);
+  border-bottom: 1px solid var(--color-border);
+  user-select: none;
+}
+
+#render-preview-section summary:hover {
+  background: var(--color-secondary-hover);
+}
+
+#render-preview {
+  font-size: 12px;
+  padding: 6px 10px;
+  overflow: auto;
+  max-height: 80px;
+  line-height: 1.5;
+  color: var(--color-text);
+  background: #fff;
+}
+
+#render-preview h1 { font-size: 15px; font-weight: 700; margin-bottom: 2px; }
+#render-preview h2 { font-size: 13px; font-weight: 700; margin-bottom: 2px; }
+#render-preview ul, #render-preview ol { padding-left: 18px; }
+#render-preview a  { color: var(--color-info); }
+
 /* ─── HTML Preview ──────────────────────────────────────────────────────────── */
 #html-preview-section {
   flex-shrink: 0;

@@ -47,20 +47,29 @@ Office.onReady((info) => {
 
 /**
  * Initialises the Quill WYSIWYG editor with the snow theme and attaches
- * it to the #editor element. Updates the HTML preview on every keystroke.
+ * it to the #editor element. Registers H1/H2 headers and link support.
+ * Updates the HTML preview and unsaved indicator on every keystroke.
  */
 function initEditor() {
   quill = new Quill('#editor', {
     modules: {
       toolbar: {
-        container: '#toolbar'
+        container: '#toolbar',
+        handlers: {
+          // Default link handler prompts for URL — no override needed
+        }
       }
     },
+    formats: ['bold', 'italic', 'list', 'link', 'header'],
     placeholder: 'Escriu el contingut aquí...',
     theme: 'snow'
   });
 
-  quill.on('text-change', updateHTMLPreview);
+  quill.on('text-change', () => {
+    updateHTMLPreview();
+    updateRenderPreview();
+    updateUnsavedIndicator();
+  });
 }
 
 // ─── Button Bindings ──────────────────────────────────────────────────────────
@@ -151,6 +160,8 @@ async function loadCurrentCellContent() {
       } finally {
         isLoadingFromCell = false;
         updateHTMLPreview();
+        updateRenderPreview();
+        setUnsavedIndicator(false);
       }
     });
   } catch (error) {
@@ -204,8 +215,8 @@ async function sendToExcel() {
 
       await context.sync();
 
-      // Snapshot the newly written value so Undo can revert to it
       setSnapshot(htmlContent);
+      setUnsavedIndicator(false);
       showStatus('HTML enviat correctament a Excel! (Ctrl+Enter)', 'success');
     });
   } catch (error) {
@@ -242,6 +253,8 @@ function undoToCell() {
   } finally {
     isLoadingFromCell = false;
     updateHTMLPreview();
+    updateRenderPreview();
+    setUnsavedIndicator(false);
   }
 
   showStatus('Contingut restaurat.', 'info');
@@ -267,6 +280,7 @@ function setSnapshot(value) {
 function clearEditor() {
   quill.setText('');
   updateHTMLPreview();
+  updateRenderPreview();
   showStatus('Editor netejat.', 'info');
 }
 
@@ -325,6 +339,45 @@ function updateHTMLPreview() {
   if (!preview) return;
   const html = buildCleanHTML();
   preview.textContent = html || '(buit)';
+}
+
+// ─── Rendered Preview ─────────────────────────────────────────────────────────
+
+/**
+ * Updates the collapsible rendered preview panel by setting its innerHTML
+ * to the sanitised editor content. This shows how the HTML will look
+ * when rendered by a browser or e-commerce platform.
+ */
+function updateRenderPreview() {
+  const container = document.getElementById('render-preview');
+  if (!container) return;
+  const html = buildCleanHTML();
+  container.innerHTML = html || '<em style="color:#a19f9d">(buit)</em>';
+}
+
+// ─── Unsaved Indicator ────────────────────────────────────────────────────────
+
+/**
+ * Compares the current editor content with the last saved cell snapshot
+ * and shows or hides the unsaved-changes indicator dot accordingly.
+ */
+function updateUnsavedIndicator() {
+  if (isLoadingFromCell) return;
+  const currentHTML = buildCleanHTML();
+  const isDirty = lastCellSnapshot !== null
+    ? currentHTML !== lastCellSnapshot
+    : currentHTML !== '';
+  setUnsavedIndicator(isDirty);
+}
+
+/**
+ * Directly sets the visibility of the unsaved-changes indicator dot.
+ * @param {boolean} dirty - True to show the indicator, false to hide it.
+ */
+function setUnsavedIndicator(dirty) {
+  const el = document.getElementById('unsaved-indicator');
+  if (!el) return;
+  el.hidden = !dirty;
 }
 
 // ─── Cell Address Display ─────────────────────────────────────────────────────

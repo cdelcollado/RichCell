@@ -42,6 +42,7 @@
       <div id="cell-info">
         <span id="cell-address-label">Cel·la activa:</span>
         <span id="cell-address">—</span>
+        <span id="unsaved-indicator" title="Hi ha canvis no guardats a Excel" hidden>●</span>
       </div>
     </div>
 
@@ -50,12 +51,22 @@
       <!-- Custom Quill toolbar -->
       <div id="toolbar">
         <span class="ql-formats">
+          <select class="ql-header" title="Capçalera">
+            <option value="1">H1</option>
+            <option value="2">H2</option>
+            <option selected>Normal</option>
+          </select>
+        </span>
+        <span class="ql-formats">
           <button class="ql-bold" title="Negreta (Ctrl+B)"></button>
           <button class="ql-italic" title="Cursiva (Ctrl+I)"></button>
         </span>
         <span class="ql-formats">
           <button class="ql-list" value="bullet" title="Llista de punts"></button>
           <button class="ql-list" value="ordered" title="Llista numerada"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-link" title="Inserir enllaç"></button>
         </span>
         <span class="ql-formats">
           <button class="ql-clean" title="Eliminar tot el format"></button>
@@ -66,7 +77,13 @@
       <div id="editor"></div>
     </div>
 
-    <!-- HTML Preview (collapsible) -->
+    <!-- Rendered preview (collapsible) -->
+    <details id="render-preview-section">
+      <summary>Vista prèvia renderitzada</summary>
+      <div id="render-preview"></div>
+    </details>
+
+    <!-- Raw HTML preview (collapsible) -->
     <details id="html-preview-section">
       <summary>Vista prèvia HTML</summary>
       <pre id="html-preview"></pre>
