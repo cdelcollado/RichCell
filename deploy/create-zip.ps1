@@ -1,10 +1,10 @@
 # Crea un ZIP de distribució (sense node_modules)
 $source  = "C:\HTML_in_Excel"
-$output  = "$env:USERPROFILE\Desktop\HTMLProductEditor_install.zip"
+$output  = "$env:USERPROFILE\Desktop\RichCell_install.zip"
 
 $exclude = @("node_modules", ".git")
 
-$tmpDir = "$env:TEMP\HTMLProductEditor_dist"
+$tmpDir = "$env:TEMP\RichCell_dist"
 if (Test-Path $tmpDir) { Remove-Item $tmpDir -Recurse -Force }
 New-Item -ItemType Directory -Path $tmpDir | Out-Null
 

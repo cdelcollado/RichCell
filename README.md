@@ -1,8 +1,8 @@
-# HTML Product Editor — Excel 365 Add-in
+# RichCell — Excel 365 Add-in
 
 A task pane add-in for Microsoft Excel 365 that lets you write and store formatted HTML directly inside cells, using a WYSIWYG editor powered by [Quill.js](https://quilljs.com/).
 
-Designed for product catalog workflows where rich HTML descriptions need to be maintained inside a spreadsheet.
+Designed for workflows where rich HTML content needs to be authored and maintained inside a spreadsheet.
 
 ---
 
@@ -32,7 +32,7 @@ Designed for product catalog workflows where rich HTML descriptions need to be m
 
 ```bash
 git clone https://github.com/cdelcollado/html-product-editor.git
-cd html-product-editor
+cd html-product-editor   # local folder stays C:\HTML_in_Excel
 ```
 
 ### 2. Install Node.js dependencies

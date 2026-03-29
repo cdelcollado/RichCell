@@ -1,9 +1,9 @@
 #Requires -Version 5.1
 <#
 .SYNOPSIS
-    Instal·la el complement "Editor HTML Productes" a un nou ordinador.
+    Instal·la RichCell a un nou ordinador.
 .DESCRIPTION
-    1. Copia els fitxers del projecte a C:\HTML_in_Excel
+    1. Copia els fitxers del projecte a C:\RichCell
     2. Instal·la Node.js si cal (obre el navegador)
     3. Instal·la paquets npm
     4. Instal·la el certificat CA al magatzem de confiança
@@ -12,12 +12,12 @@
     7. Configura Excel per mostrar el complement
 .EXAMPLE
     # Des de la carpeta compartida de xarxa:
-    powershell -ExecutionPolicy Bypass -File "\\NOM-PC\HTML_in_Excel\deploy\install.ps1"
+    powershell -ExecutionPolicy Bypass -File "\\NOM-PC\RichCell\deploy\install.ps1"
 #>
 
 $ErrorActionPreference = "Stop"
-$DestPath = "C:\HTML_in_Excel"
-$TaskName = "HTMLProductEditor_Server"
+$DestPath = "C:\RichCell"
+$TaskName = "RichCell_Server"
 
 # ── Colors ────────────────────────────────────────────────────────────────────
 function OK   { param($msg) Write-Host "  [OK] $msg" -ForegroundColor Green }
@@ -27,7 +27,7 @@ function FAIL { param($msg) Write-Host "  [XX] $msg" -ForegroundColor Red }
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║   Editor HTML Productes  –  Instal·lació         ║" -ForegroundColor Cyan
+Write-Host "║   RichCell  –  Instal·lació                      ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
 
@@ -152,7 +152,7 @@ OK "Servidor arrencat (s'iniciarà automàticament en cada inici de sessió)"
 
 # ── 6. Comparteix la carpeta local ────────────────────────────────────────────
 INFO "Compartint carpeta local..."
-$shareName = "HTML_in_Excel"
+$shareName = "RichCell"
 $shareExists = Get-SmbShare -Name $shareName -ErrorAction SilentlyContinue
 if (-not $shareExists) {
     $everyone = (New-Object System.Security.Principal.SecurityIdentifier("S-1-1-0")).Translate(
@@ -172,7 +172,7 @@ $catalogsKey = "HKCU:\Software\Microsoft\Office\16.0\WEF\TrustedCatalogs"
 if (Test-Path $catalogsKey) {
     Get-ChildItem $catalogsKey | ForEach-Object {
         $url = (Get-ItemProperty $_.PSPath -Name Url -ErrorAction SilentlyContinue).Url
-        if ($url -and $url -like "*HTML_in_Excel*") {
+        if ($url -and $url -like "*RichCell*") {
             Remove-Item $_.PSPath -Force
         }
     }
@@ -196,5 +196,5 @@ Write-Host "  Passos finals:" -ForegroundColor White
 Write-Host "  1. Tanca Excel completament (si estava obert)"   -ForegroundColor Yellow
 Write-Host "  2. Torna a obrir Excel"                          -ForegroundColor Yellow
 Write-Host "  3. Inserir → Complements → CARPETA COMPARTIDA"   -ForegroundColor Yellow
-Write-Host "  4. Selecciona 'Editor HTML Productes'"           -ForegroundColor Yellow
+Write-Host "  4. Selecciona 'RichCell'"                        -ForegroundColor Yellow
 Write-Host ""

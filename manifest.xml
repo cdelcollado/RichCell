@@ -6,10 +6,10 @@
 
   <Id>a1b2c3d4-e5f6-7890-abcd-ef1234567890</Id>
   <Version>1.0.0.0</Version>
-  <ProviderName>HTML Product Editor</ProviderName>
+  <ProviderName>RichCell</ProviderName>
   <DefaultLocale>en-US</DefaultLocale>
-  <DisplayName DefaultValue="Editor HTML Productes"/>
-  <Description DefaultValue="Edita descripcions de productes amb format HTML"/>
+  <DisplayName DefaultValue="RichCell"/>
+  <Description DefaultValue="Edita i emmagatzema HTML formatat directament a cel·les d'Excel"/>
   <IconUrl DefaultValue="https://localhost:3000/assets/icon-32.png"/>
   <HighResolutionIconUrl DefaultValue="https://localhost:3000/assets/icon-80.png"/>
   <SupportUrl DefaultValue="https://localhost:3000"/>

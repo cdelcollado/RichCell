@@ -1,7 +1,7 @@
 {
-  "name": "html-product-editor",
+  "name": "richcell",
   "version": "1.0.0",
-  "description": "Excel Add-in per editar descripcions de productes amb format HTML ric",
+  "description": "Excel 365 Add-in — WYSIWYG HTML editor that writes formatted HTML directly into cells",
   "scripts": {
     "start": "node server.js",
     "setup": "npm install && node generate-icons.js && npx office-addin-dev-certs install",

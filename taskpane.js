@@ -251,7 +251,7 @@ function showStatus(message, type) {
 
 // ─── Error Handler ────────────────────────────────────────────────────────────
 function handleError(error) {
-  console.error('[HTML Product Editor]', error);
+  console.error('[RichCell]', error);
 
   let msg;
   if (error && error.code) {
