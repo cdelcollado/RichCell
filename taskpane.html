@@ -4,6 +4,14 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+  <meta http-equiv="Content-Security-Policy" content="
+    default-src 'none';
+    script-src  'self' https://appsforoffice.microsoft.com https://cdn.quilljs.com;
+    style-src   'self' https://cdn.quilljs.com;
+    font-src    'self' https://cdn.quilljs.com;
+    img-src     'self' data:;
+    connect-src 'self' https://appsforoffice.microsoft.com;
+  "/>
   <title>RichCell</title>
 
   <!-- Office.js (must load before any other script) -->

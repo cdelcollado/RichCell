@@ -199,6 +199,12 @@ function buildCleanHTML() {
     .replace(/\sstyle="[^"]*"/g, '')
     .replace(/\sdata-[^=]+="[^"]*"/g, '');
 
+  // Strip all event handler attributes (on* = potential XSS vector)
+  html = html.replace(/\s+on\w+="[^"]*"/gi, '');
+
+  // Strip javascript: URIs from href/src attributes
+  html = html.replace(/(href|src)="javascript:[^"]*"/gi, '');
+
   // Collapse multiple whitespace sequences inside tags
   html = html.replace(/\s{2,}/g, ' ').trim();
 

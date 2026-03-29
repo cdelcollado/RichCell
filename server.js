@@ -15,22 +15,36 @@ const MIME = {
   '.json': 'application/json'
 };
 
+const ROOT = path.resolve(__dirname);
+
 function requestHandler(req, res) {
-  const safeURL  = req.url.split('?')[0].replace(/\.\./g, '');
-  const filePath = path.join(__dirname, safeURL === '/' ? 'taskpane.html' : safeURL);
+  const urlPath  = req.url.split('?')[0];
+  const filePath = path.resolve(__dirname, urlPath === '/' ? 'taskpane.html' : urlPath.slice(1));
+
+  // Reject any path that escapes the project root (path traversal guard)
+  if (!filePath.startsWith(ROOT + path.sep) && filePath !== ROOT) {
+    res.writeHead(403, { 'Content-Type': 'text/plain' });
+    res.end('403: Forbidden');
+    return;
+  }
+
   const ext      = path.extname(filePath).toLowerCase();
   const mimeType = MIME[ext] || 'application/octet-stream';
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
       res.writeHead(404, { 'Content-Type': 'text/plain' });
-      res.end(`404: ${safeURL}`);
+      res.end('404: Not Found');
       return;
     }
     res.writeHead(200, {
       'Content-Type':                mimeType,
-      'Access-Control-Allow-Origin': '*',
-      'Cache-Control':               'no-cache'
+      'Cache-Control':               'no-cache',
+      // Restrict add-in to known origins only
+      'Access-Control-Allow-Origin': 'https://localhost:3000',
+      // Prevent the page from being embedded in unexpected frames
+      'X-Frame-Options':             'SAMEORIGIN',
+      'X-Content-Type-Options':      'nosniff'
     });
     res.end(data);
   });
