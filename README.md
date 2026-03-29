@@ -31,8 +31,8 @@ Designed for workflows where rich HTML content needs to be authored and maintain
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/cdelcollado/html-product-editor.git
-cd html-product-editor   # local folder stays C:\HTML_in_Excel
+git clone https://github.com/cdelcollado/RichCell.git
+cd RichCell
 ```
 
 ### 2. Install Node.js dependencies
@@ -78,7 +78,7 @@ The server runs at `https://localhost:3000`. Keep this terminal open while using
 1. Open Excel 365
 2. Go to **Insert** → **Add-ins** → **Upload My Add-in** (or configure a shared folder catalog — see below)
 3. Select `manifest.xml` from the project folder
-4. The **HTML Product Editor** task pane will open on the right side
+4. The **RichCell** task pane will open on the right side
 
 #### Shared folder catalog (recommended for teams)
 
@@ -86,10 +86,10 @@ This method avoids re-uploading the manifest after each Excel restart:
 
 1. Share the project folder on your local network (or locally)
 2. In Excel: **File** → **Options** → **Trust Center** → **Trust Center Settings** → **Trusted Add-in Catalogs**
-3. Enter the UNC path (e.g. `\\YOUR-PC\html-product-editor`) and click **Add to List**
+3. Enter the UNC path (e.g. `\\YOUR-PC\RichCell`) and click **Add to List**
 4. Check **Show in Menu**, click OK
 5. Restart Excel
-6. **Insert** → **Add-ins** → **SHARED FOLDER** tab → select **HTML Product Editor**
+6. **Insert** → **Add-ins** → **SHARED FOLDER** tab → select **RichCell**
 
 ---
 
@@ -110,16 +110,16 @@ The status bar at the bottom shows feedback for every operation.
 To have the server start automatically when you log in to Windows:
 
 ```powershell
-$action   = New-ScheduledTaskAction -Execute "node.exe" -Argument "server.js" -WorkingDirectory "C:\html-product-editor"
+$action   = New-ScheduledTaskAction -Execute "node.exe" -Argument "server.js" -WorkingDirectory "C:\RichCell"
 $trigger  = New-ScheduledTaskTrigger -AtLogon
 $settings = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Hours 0) -RestartCount 3
-Register-ScheduledTask -TaskName "HTMLProductEditor_Server" -Action $action -Trigger $trigger -Settings $settings -RunLevel Highest -Force
+Register-ScheduledTask -TaskName "RichCell_Server" -Action $action -Trigger $trigger -Settings $settings -RunLevel Highest -Force
 ```
 
 To remove the scheduled task:
 
 ```powershell
-Unregister-ScheduledTask -TaskName "HTMLProductEditor_Server" -Confirm:$false
+Unregister-ScheduledTask -TaskName "RichCell_Server" -Confirm:$false
 ```
 
 ---
@@ -129,7 +129,7 @@ Unregister-ScheduledTask -TaskName "HTMLProductEditor_Server" -Confirm:$false
 Use the automated installer to deploy to additional machines:
 
 ```powershell
-powershell -ExecutionPolicy Bypass -File "\\YOUR-PC\html-product-editor\deploy\install.ps1"
+powershell -ExecutionPolicy Bypass -File "\\YOUR-PC\RichCell\deploy\install.ps1"
 ```
 
 See [`deploy/install.ps1`](deploy/install.ps1) for details.
@@ -139,7 +139,7 @@ See [`deploy/install.ps1`](deploy/install.ps1) for details.
 ## Project structure
 
 ```
-html-product-editor/
+RichCell/
 ├── manifest.xml          # Office Add-in manifest
 ├── server.js             # Node.js HTTPS server (port 3000)
 ├── taskpane.html         # Task pane UI

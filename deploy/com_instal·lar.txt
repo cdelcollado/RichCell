@@ -4,7 +4,7 @@ TU — una sola vegada:
 
 powershell -ExecutionPolicy Bypass -File "C:\HTML_in_Excel\deploy\create-zip.ps1"
 
-→ Genera HTMLProductEditor_install.zip a l'escriptori (~2-3 MB)
+→ Genera RichCell_install.zip a l'escriptori (~2-3 MB)
 
 Envia'l per email / Teams / Drive / USB als companys.
 

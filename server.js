@@ -58,7 +58,7 @@ const server = https.createServer(loadCredentials(), requestHandler);
 server.listen(PORT, () => {
   console.log('');
   console.log('╔══════════════════════════════════════════════════╗');
-  console.log('║   HTML Product Editor – Servidor HTTPS  ✓        ║');
+  console.log('║   RichCell – Servidor HTTPS  ✓                   ║');
   console.log('╠══════════════════════════════════════════════════╣');
   console.log(`║  https://localhost:${PORT}/taskpane.html              ║`);
   console.log('╚══════════════════════════════════════════════════╝');
