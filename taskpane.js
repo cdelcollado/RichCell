@@ -54,13 +54,9 @@ function initEditor() {
   quill = new Quill('#editor', {
     modules: {
       toolbar: {
-        container: '#toolbar',
-        handlers: {
-          // Default link handler prompts for URL — no override needed
-        }
+        container: '#toolbar'
       }
     },
-    formats: ['bold', 'italic', 'list', 'link', 'header'],
     placeholder: 'Escriu el contingut aquí...',
     theme: 'snow'
   });
