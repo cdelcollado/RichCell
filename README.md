@@ -10,11 +10,25 @@ Designed for workflows where rich HTML content needs to be authored and maintain
 
 ## Features
 
-- **WYSIWYG editor** — bold, italic, bullet lists, numbered lists
+### Editor
+- **WYSIWYG editor** — headings (H1/H2), bold, italic, bullet lists, numbered lists, hyperlinks
 - **Auto-load** — selecting a cell that contains HTML automatically loads it into the editor
-- **Write to cell** — sends clean HTML to the active cell with one click
-- **HTML preview** — collapsible raw HTML view for inspection
+- **Write to cell** — sends clean, sanitised HTML to the active cell with one click (`Ctrl+Enter`)
+- **Undo** — restores the original cell content before any edits were made
+
+### Previews
+- **Rendered preview** — collapsible panel showing how the HTML will look when rendered
+- **Raw HTML preview** — collapsible panel showing the clean HTML source
+
+### Safety & feedback
+- **Unsaved indicator** — a pulsing dot appears next to the cell address when there are unsaved changes
+- **Status bar** — real-time feedback for every operation (load, save, error)
+- **XSS protection** — strips `on*` event attributes and `javascript:` URIs before writing to the cell
+
+### Infrastructure
 - **Runs locally** — no cloud dependency, no data leaves your machine
+- **Auto-start** — optional Windows scheduled task starts the server at login
+- **Team deployment** — one-command installer for additional machines
 
 ---
 
@@ -97,13 +111,20 @@ This method avoids re-uploading the manifest after each Excel restart:
 
 ## Usage
 
-1. **Select a cell** in your spreadsheet
-2. The editor automatically loads any existing HTML from that cell
-3. **Write or edit** your content using the toolbar (bold, italic, lists)
-4. Click **Send to Excel** to write the clean HTML back to the cell
-5. Use **Clear** to reset the editor without affecting the cell
+1. **Select a cell** — the editor automatically loads any existing HTML or plain text from that cell
+2. **Write or edit** content using the toolbar:
+   - `H1` / `H2` — headings
+   - **B** / *I* — bold and italic
+   - List buttons — bullet or numbered lists
+   - Chain icon — insert a hyperlink
+   - Eraser — remove all formatting
+3. **Send to Excel** (or `Ctrl+Enter`) — writes clean HTML to the cell and auto-fits the row height
+4. **Undo** — restores the editor to the cell's original content
+5. **Clear** — resets the editor without modifying the cell
+6. Expand **Rendered preview** to see how the HTML will look in a browser
+7. Expand **HTML source** to inspect or copy the raw HTML
 
-The status bar at the bottom shows feedback for every operation.
+A pulsing orange dot `●` next to the cell address means there are unsaved changes. The status bar confirms every operation.
 
 ---
 
