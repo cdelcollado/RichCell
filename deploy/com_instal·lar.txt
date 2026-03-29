@@ -1,0 +1,23 @@
+Procés complet:
+
+TU — una sola vegada:
+
+powershell -ExecutionPolicy Bypass -File "C:\HTML_in_Excel\deploy\create-zip.ps1"
+
+→ Genera HTMLProductEditor_install.zip a l'escriptori (~2-3 MB)
+
+Envia'l per email / Teams / Drive / USB als companys.
+
+CADA COMPANY:
+
+Instal·lar Node.js LTS si no el tenen → https://nodejs.org
+
+Extreure el ZIP a qualsevol lloc (ex: Escriptori)
+
+Obrir PowerShell dins la carpeta extreta i executar:
+
+powershell -ExecutionPolicy Bypass -File ".\deploy\install.ps1"
+
+Tancar i tornar a obrir Excel → Inserir → Complements → Carpeta compartida
+L'script fa tot el reste automàticament (còpia fitxers, instala certificats, configura servidor automàtic, configura Excel).
+

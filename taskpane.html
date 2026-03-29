@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge"/>
+  <title>Editor HTML Productes</title>
+
+  <!-- Office.js (must load before any other script) -->
+  <script src="https://appsforoffice.microsoft.com/lib/1/hosted/office.js"></script>
+
+  <!-- Quill.js snow theme -->
+  <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet"/>
+  <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+
+  <link rel="stylesheet" href="taskpane.css"/>
+</head>
+<body>
+
+  <div id="app">
+
+    <!-- Header -->
+    <div id="header">
+      <div id="header-title">
+        <svg class="header-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <polyline points="14 2 14 8 20 8"/>
+          <line x1="16" y1="13" x2="8" y2="13"/>
+          <line x1="16" y1="17" x2="8" y2="17"/>
+          <polyline points="10 9 9 9 8 9"/>
+        </svg>
+        <h2>Editor HTML de Productes</h2>
+      </div>
+      <div id="cell-info">
+        <span id="cell-address-label">Cel·la activa:</span>
+        <span id="cell-address">—</span>
+      </div>
+    </div>
+
+    <!-- WYSIWYG Editor -->
+    <div id="editor-container">
+      <!-- Custom Quill toolbar -->
+      <div id="toolbar">
+        <span class="ql-formats">
+          <button class="ql-bold" title="Negreta (Ctrl+B)"></button>
+          <button class="ql-italic" title="Cursiva (Ctrl+I)"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-list" value="bullet" title="Llista de punts"></button>
+          <button class="ql-list" value="ordered" title="Llista numerada"></button>
+        </span>
+        <span class="ql-formats">
+          <button class="ql-clean" title="Eliminar tot el format"></button>
+        </span>
+      </div>
+
+      <!-- Quill editor area -->
+      <div id="editor"></div>
+    </div>
+
+    <!-- HTML Preview (collapsible) -->
+    <details id="html-preview-section">
+      <summary>Vista prèvia HTML</summary>
+      <pre id="html-preview"></pre>
+    </details>
+
+    <!-- Action buttons -->
+    <div id="actions">
+      <button id="btn-send" class="btn-primary" title="Escriu el contingut HTML a la cel·la seleccionada">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 2L11 13"/>
+          <path d="M22 2L15 22 11 13 2 9l20-7z"/>
+        </svg>
+        Enviar a Excel
+      </button>
+      <button id="btn-clear" class="btn-secondary" title="Netejar l'editor">
+        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+        Netejar
+      </button>
+    </div>
+
+    <!-- Status bar -->
+    <div id="status-bar">
+      <span id="status-message"></span>
+    </div>
+
+  </div>
+
+  <script src="taskpane.js"></script>
+</body>
+</html>

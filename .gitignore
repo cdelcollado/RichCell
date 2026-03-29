@@ -1,0 +1,4 @@
+node_modules/
+certs/ca.key
+certs/localhost.key
+.claude/
